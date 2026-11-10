@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English M.3 - Past Simple Tense (Emergency)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Kanit', sans-serif; background-color: #f3f4f6; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Game Canvas Styles */
+        #game-container { position: relative; width: 400px; height: 640px; margin: 0 auto; overflow: hidden; background: linear-gradient(to bottom, #1e3a8a, #3b82f6); border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); max-width: 100%; }
+        canvas { display: block; width: 100%; height: 100%; }
+        
+        /* Game Controls */
+        .controls { position: absolute; bottom: 20px; left: 0; width: 100%; display: flex; justify-content: center; gap: 15px; z-index: 10; padding: 0 20px; }
+        .control-btn { background: rgba(255, 255, 255, 0.5); border: 2px solid white; color: #1e3a8a; font-size: 24px; font-weight: bold; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; transition: opacity 0.1s, transform 0.1s; }
+        .control-btn:active { opacity: 0.85; transform: scale(0.95); }
+        .turbo-btn { background: rgba(250, 204, 21, 0.6); color: #854d0e; width: 70px; height: 70px; }
+        
+        /* HUD & Overlays */
+        #hud { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between; z-index: 10; color: white; font-weight: bold; text-shadow: 1px 1px 2px black; pointer-events: none; }
+        #target-task { position: absolute; top: 40px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); color: yellow; padding: 4px 12px; border-radius: 20px; font-size: 14px; white-space: nowrap; z-index: 10; display: none; }
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 20; text-align: center; padding: 20px; }
+        .hidden-game { display: none !important; }
+        
+        /* Animations */
+        @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 10% { transform: translate(-1px, -2px) rotate(-1deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 30% { transform: translate(3px, 2px) rotate(0deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 50% { transform: translate(-1px, 2px) rotate(-1deg); } 60% { transform: translate(-3px, 1px) rotate(0deg); } 70% { transform: translate(3px, 1px) rotate(-1deg); } 80% { transform: translate(-1px, -1px) rotate(1deg); } 90% { transform: translate(1px, 2px) rotate(0deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
+        .shake-anim { animation: shake 0.3s; }
+        .speaker-btn { cursor: pointer; display: inline-flex; align-items: center; justify-content: center; background-color: #eef2ff; color: #4f46e5; border-radius: 9999px; padding: 4px 8px; transition: all 0.2s; }
+        .speaker-btn:hover { background-color: #c7d2fe; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Header & Navbar -->
+    <header class="bg-blue-800 text-white shadow-md">
+        <div class="max-w-4xl mx-auto px-4 py-4 text-center">
+            <h1 class="text-2xl font-bold">Past Simple Tense (Emergency)</h1>
+            <p class="text-sm mt-1">บทเรียนภาษาอังกฤษ ม.3</p>
+        </div>
+        <nav class="flex justify-center bg-blue-900 text-sm sm:text-base">
+            <button onclick="switchTab('knowledge')" class="nav-btn px-4 py-3 hover:bg-blue-700 focus:bg-blue-700 bg-blue-700 font-medium transition" id="nav-knowledge">📖 ใบความรู้</button>
+            <button onclick="switchTab('game')" class="nav-btn px-4 py-3 hover:bg-blue-700 focus:bg-blue-700 font-medium transition" id="nav-game">🎮 เกมคำศัพท์</button>
+            <button onclick="switchTab('exercise')" class="nav-btn px-4 py-3 hover:bg-blue-700 focus:bg-blue-700 font-medium transition" id="nav-exercise">📝 แบบฝึกหัด</button>
+            <button onclick="switchTab('test')" class="nav-btn px-4 py-3 hover:bg-blue-700 focus:bg-blue-700 font-medium transition" id="nav-test">🎯 แบบทดสอบ</button>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-4xl mx-auto w-full p-4 sm:p-6" id="content">
+
+        <!-- Section 1: Knowledge -->
+        <section id="knowledge" class="tab-content active bg-white rounded-xl shadow-sm p-6">
+            <h2 class="text-xl font-bold text-blue-800 mb-4 border-b-2 border-blue-200 pb-2">📖 ใบความรู้: Past Simple Tense</h2>
+            <div class="space-y-4 text-gray-700">
+                <p><strong>Past Simple Tense</strong> ใช้เพื่อบอกเล่าเหตุการณ์ หรือการกระทำที่ "เกิดขึ้น" และ "จบลงไปแล้ว" ในอดีต มักมีคำบอกเวลา เช่น <span class="text-blue-600 font-medium cursor-pointer" onclick="speak('yesterday')">yesterday</span>, <span class="text-blue-600 font-medium cursor-pointer" onclick="speak('last night')">last night</span></p>
+                
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                    <h3 class="font-bold text-blue-700 mb-2">โครงสร้างประโยค (Structures)</h3>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li><strong>บอกเล่า:</strong> Subject + V.2</li>
+                        <li><strong>ปฏิเสธ:</strong> Subject + didn't + V.1</li>
+                        <li><strong>คำถาม:</strong> Did + Subject + V.1 ?</li>
+                    </ul>
+                </div>
+
+                <h3 class="font-bold text-blue-800 mt-6 text-lg">🚑 คำศัพท์ที่พบบ่อยในเหตุฉุกเฉิน (V.1 ➔ V.2)</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="bg-gray-50 p-3 rounded border flex justify-between items-center">
+                        <div><span class="font-bold">happen ➔ happened</span> (เกิด)</div>
+                        <button class="speaker-btn" onclick="speak('happen. happened.')">🔊</button>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded border flex justify-between items-center">
+                        <div><span class="font-bold">crash ➔ crashed</span> (ชน)</div>
+                        <button class="speaker-btn" onclick="speak('crash. crashed.')">🔊</button>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded border flex justify-between items-center">
+                        <div><span class="font-bold">call ➔ called</span> (โทรเรียก)</div>
+                        <button class="speaker-btn" onclick="speak('call. called.')">🔊</button>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded border flex justify-between items-center">
+                        <div><span class="font-bold">fall ➔ fell</span> (หกล้ม/ตก)</div>
+                        <button class="speaker-btn" onclick="speak('fall. fell.')">🔊</button>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded border flex justify-between items-center">
+                        <div><span class="font-bold">break ➔ broke</span> (หัก)</div>
+                        <button class="speaker-btn" onclick="speak('break. broke.')">🔊</button>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded border flex justify-between items-center">
+                        <div><span class="font-bold">see ➔ saw</span> (เห็น)</div>
+                        <button class="speaker-btn" onclick="speak('see. saw.')">🔊</button>
+                    </div>
+                </div>
+
+                <h3 class="font-bold text-blue-800 mt-6 text-lg">🗣️ ประโยคตัวอย่าง (Sentences)</h3>
+                <div class="space-y-3">
+                    <div class="flex items-start gap-2 bg-gray-50 p-3 rounded border">
+                        <button class="speaker-btn mt-0.5" onclick="speak('The car crashed into a tree.')">🔊</button>
+                        <div>
+                            <p class="font-medium">The car crashed into a tree.</p>
+                            <p class="text-sm text-gray-500">รถยนต์ชนต้นไม้ (ประโยคบอกเล่า)</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-2 bg-gray-50 p-3 rounded border">
+                        <button class="speaker-btn mt-0.5" onclick="speak('A boy fell off his bike.')">🔊</button>
+                        <div>
+                            <p class="font-medium">A boy fell off his bike.</p>
+                            <p class="text-sm text-gray-500">เด็กชายตกจากจักรยาน (ประโยคบอกเล่า)</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-2 bg-gray-50 p-3 rounded border">
+                        <button class="speaker-btn mt-0.5" onclick="speak('I didn\'t see the accident.')">🔊</button>
+                        <div>
+                            <p class="font-medium">I didn't see the accident.</p>
+                            <p class="text-sm text-gray-500">ฉันไม่เห็นอุบัติเหตุนั้น (ประโยคปฏิเสธ - ใช้ V.1)</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-2 bg-gray-50 p-3 rounded border">
+                        <button class="speaker-btn mt-0.5" onclick="speak('Did you call 1669?')">🔊</button>
+                        <div>
+                            <p class="font-medium">Did you call 1669?</p>
+                            <p class="text-sm text-gray-500">คุณได้โทรเรียก 1669 หรือเปล่า? (ประโยคคำถาม - ใช้ V.1)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Game -->
+        <section id="game" class="tab-content">
+            <div class="mb-4 flex flex-wrap justify-between items-center bg-white p-3 rounded-xl shadow-sm gap-2">
+                <div>
+                    <h2 class="font-bold text-blue-800">🚑 Rescue Vocabulary Game</h2>
+                    <p class="text-xs text-gray-600">รับคำศัพท์ฉุกเฉิน (V.2) หลบหลีกคำศัพท์หลอก!</p>
+                </div>
+                <div class="flex gap-2">
+                    <button id="toggleAudioBtn" onclick="toggleMute()" class="px-3 py-1 bg-gray-200 rounded text-sm font-bold hover:bg-gray-300 transition">🔊 เสียง: เปิด</button>
+                    <select id="gameMode" class="border p-1 rounded text-sm bg-blue-50 focus:outline-none" onchange="changeMode()">
+                        <option value="1">โหมดปกติ (รับศัพท์ในบทเรียน)</option>
+                        <option value="2">โหมดแปลตามสั่ง (โบนัส x3)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="game-container">
+                <canvas id="gameCanvas" width="400" height="640"></canvas>
+                <div id="hud">
+                    <div id="hud-hearts">❤️❤️❤️</div>
+                    <div id="hud-score" class="text-center">Score: 0<br><span id="hud-combo" class="text-yellow-300 text-xs"></span></div>
+                    <div id="hud-time">60s</div>
+                </div>
+                <div id="target-task">🎯 รับคำว่า: ...</div>
+                
+                <div class="controls">
+                    <button class="control-btn" id="btn-left">◀</button>
+                    <button class="control-btn turbo-btn" id="btn-turbo">⚡<br><span class="text-[10px]">DASH</span></button>
+                    <button class="control-btn" id="btn-right">▶</button>
+                </div>
+
+                <!-- Start Screen -->
+                <div id="start-screen" class="overlay">
+                    <h1 class="text-3xl font-bold text-yellow-300 mb-2 drop-shadow-md">Rescue Vocab</h1>
+                    <p class="mb-4 text-sm max-w-xs">ช่วยคุณหมอเก็บคำศัพท์ในบทเรียน (Past Simple & เหตุฉุกเฉิน) หลบคำหลอกและอุปสรรค!</p>
+                    <button onclick="startGame()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-full shadow-lg text-lg transform transition hover:scale-105">เริ่มเล่นเลย</button>
+                </div>
+
+                <!-- Game Over Screen -->
+                <div id="game-over-screen" class="overlay hidden-game">
+                    <h2 class="text-3xl font-bold text-red-400 mb-1">Game Over</h2>
+                    <div class="text-xl mb-1">คะแนนรวม: <span id="final-score" class="text-yellow-300 font-bold">0</span></div>
+                    <div class="text-sm mb-3">ยศของคุณ: <span id="player-rank" class="font-bold text-green-300">อาสาสมัครฝึกหัด</span></div>
+                    <div class="bg-gray-800 bg-opacity-80 p-3 rounded text-left w-full max-w-[300px] h-[150px] overflow-y-auto mb-4">
+                        <h3 class="text-sm text-center border-b border-gray-600 pb-1 mb-2">📋 คำศัพท์ที่เก็บได้ (แตะฟังเสียง)</h3>
+                        <div id="caught-words-list" class="flex flex-wrap gap-1 justify-center"></div>
+                    </div>
+                    <button onclick="resetGame()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-full shadow-lg transition">เล่นใหม่อีกครั้ง</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Exercise -->
+        <section id="exercise" class="tab-content bg-white rounded-xl shadow-sm p-6">
+            <h2 class="text-xl font-bold text-blue-800 mb-4 border-b-2 border-blue-200 pb-2">📝 แบบฝึกหัด: Past Simple Tense</h2>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อ - นามสกุล (Name):</label>
+                <input type="text" id="ex-name" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500" placeholder="ระบุชื่อ-นามสกุล">
+            </div>
+            
+            <div id="ex-container"></div>
+            
+            <button onclick="submitExercise()" class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded shadow transition">ส่งคำตอบ</button>
+
+            <!-- Result Modal -->
+            <div id="ex-result" class="hidden mt-6 p-4 border-2 border-green-500 bg-green-50 rounded-lg">
+                <h3 class="font-bold text-green-800 text-lg text-center border-b border-green-200 pb-2 mb-3">สรุปผลคะแนนแบบฝึกหัด</h3>
+                <p id="ex-res-name" class="text-center font-medium mb-1"></p>
+                <p id="ex-res-score" class="text-center text-2xl font-bold text-green-600 mb-4"></p>
+                <div id="ex-res-details" class="text-sm space-y-2 max-h-[300px] overflow-y-auto bg-white p-3 rounded border"></div>
+            </div>
+        </section>
+
+        <!-- Section 4: Post-test -->
+        <section id="test" class="tab-content bg-white rounded-xl shadow-sm p-6">
+            <h2 class="text-xl font-bold text-blue-800 mb-4 border-b-2 border-blue-200 pb-2">🎯 แบบทดสอบหลังเรียน (Post-test)</h2>
+            <div id="test-intro">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อ - นามสกุล (Name):</label>
+                    <input type="text" id="test-name" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500" placeholder="ระบุชื่อ-นามสกุล">
+                </div>
+                <button onclick="startTest()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded shadow transition">เริ่มทำแบบทดสอบ (5 ข้อ)</button>
+            </div>
+            
+            <div id="test-active" class="hidden">
+                <div class="flex justify-between text-sm text-gray-500 mb-2">
+                    <span id="test-progress-text">ข้อ 1 / 5</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                    <div id="test-progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style="width: 20%"></div>
+                </div>
+                <div id="question-container" class="mb-6"></div>
+                <button onclick="nextQuestion()" id="btn-test-next" class="bg-blue-600 text-white px-6 py-2 rounded font-bold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>ข้อต่อไป (Next)</button>
+            </div>
+
+            <div id="test-result" class="hidden text-center py-6">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-500 mb-4">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-1">ทำแบบทดสอบเสร็จสิ้น</h3>
+                <p id="test-res-name" class="text-gray-600 mb-2"></p>
+                <div class="text-3xl font-bold text-blue-600 mb-6">คะแนน: <span id="test-res-score"></span> / 5</div>
+                <button onclick="switchTab('knowledge')" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded transition">กลับไปทบทวนบทเรียน</button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white text-center py-4 mt-auto text-xs sm:text-sm">
+        <p>สร้างและพัฒนาโดย นายนรินทร์ อนงค์ชัย ครู โรงเรียนเทพอุดมวิทยา สพม.สุรินทร์</p>
+    </footer>
+
+    <script>
+        // === Custom Alert (Replaces browser alert) ===
+        function customAlert(message) {
+            const alertBox = document.createElement('div');
+            alertBox.className = 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-xl p-6 z-50 text-center border-2 border-red-500 min-w-[300px]';
+            alertBox.innerHTML = `
+                <div class="text-red-500 mb-4">
+                    <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">แจ้งเตือน</h3>
+                <p class="text-gray-700 mb-6">${message}</p>
+                <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded transition w-full" onclick="this.parentElement.remove()">ตกลง</button>
+            `;
+            document.body.appendChild(alertBox);
+        }
+
+        // === Core Navigation ===
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('bg-blue-700'));
+            
+            document.getElementById(tabId).classList.add('active');
+            document.getElementById('nav-' + tabId).classList.add('bg-blue-700');
+
+            if(tabId === 'exercise') initExercise();
+        }
+
+        // === Text-To-Speech (TTS) ===
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                let utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // ==========================================
+        // GAME LOGIC (HTML5 Canvas + Web Audio API)
+        // ==========================================
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Game Data
+        const lessonWords = [
+            {en: "happened", th: "เกิด", emoji: "💥", type: "target"},
+            {en: "crashed", th: "ชน", emoji: "🚗", type: "target"},
+            {en: "called", th: "โทรเรียก", emoji: "📱", type: "target"},
+            {en: "fell", th: "หกล้ม", emoji: "🚶‍♂️", type: "target"},
+            {en: "broke", th: "หัก", emoji: "🦴", type: "target"},
+            {en: "saw", th: "เห็น", emoji: "👁️", type: "target"},
+            {en: "injured", th: "บาดเจ็บ", emoji: "🤕", type: "target"},
+            {en: "accident", th: "อุบัติเหตุ", emoji: "⚠️", type: "target"},
+            {en: "ambulance", th: "รถพยาบาล", emoji: "🚑", type: "target"},
+            {en: "rescue", th: "กู้ภัย", emoji: "🚁", type: "target"}
+        ];
+        const decoyWords = [
+            {en: "eat", th: "กิน", emoji: "🍔", type: "decoy"},
+            {en: "sleep", th: "นอน", emoji: "😴", type: "decoy"},
+            {en: "dog", th: "หมา", emoji: "🐕", type: "decoy"},
+            {en: "play", th: "เล่น", emoji: "🎮", type: "decoy"},
+            {en: "happy", th: "มีความสุข", emoji: "😊", type: "decoy"},
+            {en: "table", th: "โต๊ะ", emoji: "🪑", type: "decoy"},
+            {en: "sing", th: "ร้องเพลง", emoji: "🎤", type: "decoy"},
+            {en: "apple", th: "แอปเปิล", emoji: "🍎", type: "decoy"},
+            {en: "green", th: "สีเขียว", emoji: "🟩", type: "decoy"},
+            {en: "run", th: "วิ่ง", emoji: "🏃", type: "decoy"},
+            {en: "OBSTACLE", th: "อุปสรรค", emoji: "🚧", type: "obstacle"},
+            {en: "BOMB", th: "ระเบิด", emoji: "💣", type: "obstacle"}
+        ];
+        
+        // Audio System
+        let audioCtx;
+        let isMuted = false;
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.getElementById('toggleAudioBtn').innerText = isMuted ? "🔇 เสียง: ปิด" : "🔊 เสียง: เปิด";
+        }
+        function playSfx(type, combo = 0) {
+            if (isMuted || !audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            const now = audioCtx.currentTime;
+            
+            if (type === 'good') {
+                osc.type = 'sine';
+                let freq = 400 + (Math.min(combo, 10) * 50);
+                osc.frequency.setValueAtTime(freq, now);
+                osc.frequency.exponentialRampToValueAtTime(freq*1.5, now + 0.1);
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.3, now + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
+            } else if (type === 'bad') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(50, now + 0.3);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
+            } else if (type === 'bonus') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.setValueAtTime(600, now + 0.1);
+                osc.frequency.setValueAtTime(800, now + 0.2);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.4);
+                osc.start(now); osc.stop(now + 0.4);
+            } else if (type === 'shield_hit') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(1200, now);
+                osc.frequency.linearRampToValueAtTime(2400, now + 0.1);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now); osc.stop(now + 0.2);
+            } else if (type === 'dash') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(280, now);
+                osc.frequency.linearRampToValueAtTime(720, now + 0.15);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now); osc.stop(now + 0.2);
+            }
+        }
+
+        // Game State
+        let gameState = {
+            isRunning: false, mode: 1, targetTh: "", targetEn: "",
+            score: 0, combo: 0, hearts: 3, time: 60,
+            player: { x: 175, y: 530, w: 50, h: 50, speed: 6, dx: 0, isShielded: false, shieldTimer: 0 },
+            items: [], particles: [], floatTexts: [], caughtWords: new Set(),
+            lastTime: 0, spawnTimer: 0, gameInterval: null
+        };
+
+        const keys = { ArrowLeft: false, ArrowRight: false, a: false, d: false };
+
+        function changeMode() {
+            gameState.mode = parseInt(document.getElementById('gameMode').value);
+            if(gameState.isRunning) setTargetTask();
+        }
+
+        function setTargetTask() {
+            if(gameState.mode === 2) {
+                const targetObj = lessonWords[Math.floor(Math.random() * lessonWords.length)];
+                gameState.targetTh = targetObj.th;
+                gameState.targetEn = targetObj.en;
+                document.getElementById('target-task').innerText = `🎯 รับคำว่า: "${gameState.targetTh}"`;
+                document.getElementById('target-task').style.display = 'block';
+            } else {
+                document.getElementById('target-task').style.display = 'none';
+            }
+        }
+
+        function startGame() {
+            initAudio();
+            document.getElementById('start-screen').classList.add('hidden-game');
+            document.getElementById('game-over-screen').classList.add('hidden-game');
+            
+            gameState = {
+                isRunning: true, mode: parseInt(document.getElementById('gameMode').value),
+                targetTh: "", targetEn: "", score: 0, combo: 0, hearts: 3, time: 60,
+                player: { x: 175, y: 530, w: 50, h: 50, speed: 6, dx: 0, isShielded: false, shieldTimer: 0 },
+                items: [], particles: [], floatTexts: [], caughtWords: new Set(),
+                lastTime: performance.now(), spawnTimer: 0
+            };
+            
+            updateHUD();
+            setTargetTask();
+            
+            if(gameState.gameInterval) clearInterval(gameState.gameInterval);
+            gameState.gameInterval = setInterval(() => {
+                gameState.time--;
+                updateHUD();
+                if(gameState.time <= 0) gameOver();
+            }, 1000);
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        function resetGame() {
+            startGame();
+        }
+
+        function updateHUD() {
+            document.getElementById('hud-hearts').innerText = '❤️'.repeat(gameState.hearts);
+            document.getElementById('hud-time').innerText = gameState.time + 's';
+            let comboText = "";
+            if (gameState.combo > 4) comboText = `🔥 FEVER x${gameState.combo}!`;
+            else if (gameState.combo > 1) comboText = `COMBO x${gameState.combo}`;
+            document.getElementById('hud-score').innerHTML = `Score: ${gameState.score}<br><span id="hud-combo" class="text-yellow-300 text-xs">${comboText}</span>`;
+        }
+
+        function spawnItem() {
+            const rand = Math.random();
+            let data, type;
+            if (rand < 0.05) { data = {en: "⏰ +7s", emoji: "⏰"}; type = "time"; }
+            else if (rand < 0.11) { data = {en: "⭐ SHIELD", emoji: "🛡️"}; type = "shield"; }
+            else if (rand < 0.15 && gameState.hearts < 3) { data = {en: "💖 HEAL", emoji: "💖"}; type = "heal"; }
+            else {
+                const pool = (Math.random() > 0.5) ? lessonWords : decoyWords;
+                data = pool[Math.floor(Math.random() * pool.length)];
+                type = data.type; // target, decoy, obstacle
+            }
+            
+            gameState.items.push({
+                x: Math.random() * (canvas.width - 60) + 10,
+                y: -50, w: 60, h: 30, speed: 2 + Math.random() * 2 + (60-gameState.time)/20,
+                data: data, type: type
+            });
+        }
+
+        function createParticles(x, y, color) {
+            for(let i=0; i<10; i++){
+                gameState.particles.push({
+                    x: x, y: y,
+                    vx: (Math.random()-0.5)*10, vy: (Math.random()-0.5)*10,
+                    life: 1, color: color
+                });
+            }
+        }
+        function createFloatText(x, y, text, color) {
+            gameState.floatTexts.push({ x: x, y: y, text: text, color: color, life: 1, offset: 0 });
+        }
+
+        function gameOver() {
+            gameState.isRunning = false;
+            clearInterval(gameState.gameInterval);
+            document.getElementById('game-over-screen').classList.remove('hidden-game');
+            document.getElementById('final-score').innerText = gameState.score;
+            
+            let rank = "อาสาสมัครฝึกหัด";
+            if (gameState.score >= 500) rank = "🏆 ผู้บัญชาการสูงสุด";
+            else if (gameState.score >= 300) rank = "🥇 ฮีโร่เชี่ยวชาญพิเศษ";
+            else if (gameState.score >= 150) rank = "🥈 เจ้าหน้าที่ปฏิบัติการ";
+            document.getElementById('player-rank').innerText = rank;
+
+            const listCont = document.getElementById('caught-words-list');
+            listCont.innerHTML = "";
+            gameState.caughtWords.forEach(jsonStr => {
+                const w = JSON.parse(jsonStr);
+                const btn = document.createElement('button');
+                btn.className = "bg-blue-600 text-white text-xs px-2 py-1 rounded m-0.5 hover:bg-blue-500";
+                btn.innerText = `${w.emoji} ${w.en} = ${w.th}`;
+                btn.onclick = () => speak(w.en);
+                listCont.appendChild(btn);
+            });
+            if(gameState.caughtWords.size === 0) listCont.innerHTML = "<p class='text-sm text-gray-400'>ไม่มีคำศัพท์ที่เก็บได้</p>";
+        }
+
+        function playerDash() {
+            if (!gameState.isRunning) return;
+            playSfx('dash');
+            createParticles(gameState.player.x + 25, gameState.player.y + 25, 'cyan');
+            gameState.player.x += (gameState.player.dx > 0 || keys.ArrowRight || keys.d) ? 75 : -75;
+            if(gameState.player.x < 0) gameState.player.x = 0;
+            if(gameState.player.x > canvas.width - gameState.player.w) gameState.player.x = canvas.width - gameState.player.w;
+        }
+
+        function gameLoop(timestamp) {
+            if(!gameState.isRunning) return;
+            const dt = timestamp - gameState.lastTime;
+            gameState.lastTime = timestamp;
+
+            // Player Movement
+            if (keys.ArrowLeft || keys.a) gameState.player.x -= gameState.player.speed;
+            if (keys.ArrowRight || keys.d) gameState.player.x += gameState.player.speed;
+            if (gameState.player.dx !== 0) gameState.player.x += gameState.player.dx;
+            
+            if (gameState.player.x < 0) gameState.player.x = 0;
+            if (gameState.player.x > canvas.width - gameState.player.w) gameState.player.x = canvas.width - gameState.player.w;
+
+            // Shield Timer
+            if (gameState.player.isShielded) {
+                gameState.player.shieldTimer -= dt;
+                if(gameState.player.shieldTimer <= 0) gameState.player.isShielded = false;
+            }
+
+            // Spawner
+            gameState.spawnTimer += dt;
+            if (gameState.spawnTimer > 1000 - (60-gameState.time)*10) {
+                spawnItem();
+                gameState.spawnTimer = 0;
+            }
+
+            // Draw Background
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(255,255,255,0.1)';
+            for(let i=0; i<5; i++){
+                ctx.fillRect((timestamp/50 + i*100)%canvas.width, timestamp/100 % canvas.height, 2, 20);
+            }
+
+            // Update & Draw Items
+            for (let i = gameState.items.length - 1; i >= 0; i--) {
+                let item = gameState.items[i];
+                item.y += item.speed;
+                
+                // Draw item bg
+                ctx.fillStyle = 'rgba(255,255,255,0.9)'; // กล่องคำศัพท์ทุกคำให้เป็นสีเดียวกัน
+                if(item.type === 'shield') ctx.fillStyle = 'rgba(255,255,100,0.9)'; // ไอเทมพิเศษยังคงมีสีแยกให้
+                if(item.type === 'time') ctx.fillStyle = 'rgba(200,255,200,0.9)';
+                if(item.type === 'heal') ctx.fillStyle = 'rgba(255,200,255,0.9)';
+                
+                ctx.beginPath();
+                ctx.roundRect(item.x, item.y, item.w, item.h, 5);
+                ctx.fill();
+                
+                // Draw text
+                ctx.fillStyle = 'black';
+                ctx.font = '12px Kanit';
+                ctx.textAlign = 'center';
+                ctx.fillText(item.data.emoji + " " + item.data.en, item.x + item.w/2, item.y + 20);
+
+                // Collision Detection
+                if (item.x < gameState.player.x + gameState.player.w &&
+                    item.x + item.w > gameState.player.x &&
+                    item.y < gameState.player.y + gameState.player.h &&
+                    item.y + item.h > gameState.player.y) {
+                    
+                    if (item.type === 'target') {
+                        let pts = 10;
+                        if(gameState.mode === 2) {
+                            if(item.data.en === gameState.targetEn) { pts = 50; setTargetTask(); playSfx('bonus'); }
+                        }
+                        gameState.combo++;
+                        let comboBonus = Math.min(gameState.combo, 5) * 5;
+                        gameState.score += (pts + comboBonus);
+                        playSfx('good', gameState.combo);
+                        speak(item.data.en);
+                        createParticles(item.x+30, item.y+15, 'yellow');
+                        createFloatText(item.x, item.y, `+${pts+comboBonus} ${item.data.th}`, 'yellow');
+                        gameState.caughtWords.add(JSON.stringify(item.data));
+                    } 
+                    else if (item.type === 'decoy' || item.type === 'obstacle') {
+                        if (gameState.player.isShielded) {
+                            playSfx('shield_hit');
+                            createFloatText(item.x, item.y, '🛡️ BLOCKED!', 'cyan');
+                        } else {
+                            gameState.hearts--;
+                            gameState.score = Math.max(0, gameState.score - 10);
+                            gameState.combo = 0;
+                            playSfx('bad');
+                            createFloatText(item.x, item.y, '-10 ❤️', 'red');
+                            document.getElementById('game-container').classList.add('shake-anim');
+                            setTimeout(()=>document.getElementById('game-container').classList.remove('shake-anim'), 300);
+                            if ("vibrate" in navigator) navigator.vibrate([120, 50, 120]);
+                        }
+                        createParticles(item.x+30, item.y+15, 'red');
+                    }
+                    else if (item.type === 'shield') {
+                        gameState.player.isShielded = true;
+                        gameState.player.shieldTimer = 6000;
+                        playSfx('bonus');
+                        createFloatText(item.x, item.y, '⭐ SHIELD!', 'cyan');
+                    }
+                    else if (item.type === 'time') {
+                        gameState.time += 7;
+                        playSfx('bonus');
+                        createFloatText(item.x, item.y, '⏰ +7s TIME!', 'lime');
+                    }
+                    else if (item.type === 'heal') {
+                        gameState.hearts = Math.min(3, gameState.hearts + 1);
+                        playSfx('bonus');
+                        createFloatText(item.x, item.y, '💖 +1 HEART!', 'hotpink');
+                    }
+                    
+                    updateHUD();
+                    gameState.items.splice(i, 1);
+                    if (gameState.hearts <= 0) gameOver();
+                    continue;
+                }
+                
+                if (item.y > canvas.height) gameState.items.splice(i, 1);
+            }
+
+            // Draw Player (Ambulance / Medic)
+            ctx.fillStyle = 'white';
+            ctx.fillRect(gameState.player.x, gameState.player.y, gameState.player.w, gameState.player.h);
+            ctx.fillStyle = 'red'; // Cross
+            ctx.fillRect(gameState.player.x + 20, gameState.player.y + 10, 10, 30);
+            ctx.fillRect(gameState.player.x + 10, gameState.player.y + 20, 30, 10);
+            
+            // Draw Shield Ring
+            if (gameState.player.isShielded) {
+                ctx.beginPath();
+                ctx.arc(gameState.player.x+25, gameState.player.y+25, 35, 0, Math.PI*2);
+                ctx.strokeStyle = 'gold';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            }
+
+            // Draw Particles
+            for(let i=gameState.particles.length-1; i>=0; i--){
+                let p = gameState.particles[i];
+                p.x += p.vx; p.y += p.vy; p.life -= 0.05;
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.life;
+                ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2); ctx.fill();
+                ctx.globalAlpha = 1;
+                if(p.life <= 0) gameState.particles.splice(i,1);
+            }
+
+            // Draw Float Texts
+            for(let i=gameState.floatTexts.length-1; i>=0; i--){
+                let ft = gameState.floatTexts[i];
+                ft.offset += 1; ft.life -= 0.02;
+                ctx.fillStyle = ft.color;
+                ctx.globalAlpha = ft.life;
+                ctx.font = 'bold 16px Kanit';
+                ctx.fillText(ft.text, ft.x, ft.y - ft.offset);
+                ctx.globalAlpha = 1;
+                if(ft.life <= 0) gameState.floatTexts.splice(i,1);
+            }
+
+            if(gameState.isRunning) requestAnimationFrame(gameLoop);
+        }
+
+        // Controls Event Listeners
+        window.addEventListener('keydown', e => { if(keys.hasOwnProperty(e.key)) keys[e.key] = true; if(e.key === ' ' || e.key === 'Shift') playerDash(); });
+        window.addEventListener('keyup', e => { if(keys.hasOwnProperty(e.key)) keys[e.key] = false; });
+        
+        const btnL = document.getElementById('btn-left');
+        const btnR = document.getElementById('btn-right');
+        const btnT = document.getElementById('btn-turbo');
+        
+        const addControl = (elem, val) => {
+            elem.addEventListener('mousedown', () => gameState.player.dx = val);
+            elem.addEventListener('mouseup', () => gameState.player.dx = 0);
+            elem.addEventListener('mouseleave', () => gameState.player.dx = 0);
+            elem.addEventListener('touchstart', (e) => { e.preventDefault(); gameState.player.dx = val; });
+            elem.addEventListener('touchend', (e) => { e.preventDefault(); gameState.player.dx = 0; });
+        };
+        addControl(btnL, -6); addControl(btnR, 6);
+        
+        btnT.addEventListener('mousedown', playerDash);
+        btnT.addEventListener('touchstart', (e) => { e.preventDefault(); playerDash(); });
+
+
+        // ==========================================
+        // EXERCISE LOGIC
+        // ==========================================
+        const exPart1 = [
+            { q: "The car _____ into a tree.", opts: ["crash", "crashes", "crashed"], a: "crashed" },
+            { q: "Did you _____ the ambulance?", opts: ["call", "called", "calls"], a: "call" },
+            { q: "A boy _____ off his bike yesterday.", opts: ["fall", "fell", "fallen"], a: "fell" },
+            { q: "I didn't _____ the accident.", opts: ["saw", "see", "seen"], a: "see" },
+            { q: "What _____ last night?", opts: ["happen", "happened", "happens"], a: "happened" }
+        ];
+        
+        const exPart2 = [
+            { q: "เปลี่ยนเป็นประโยคปฏิเสธ: He broke his leg.", prefix: "He", suffix: "his leg.", a: "didn't break" },
+            { q: "เปลี่ยนเป็นประโยคคำถาม: They saw the fire.", prefix: "", suffix: "they see the fire?", a: "Did" },
+            { q: "เปลี่ยนเป็นประโยคบอกเล่า: She didn't call 1669.", prefix: "She", suffix: "1669.", a: "called" },
+            { q: "เปลี่ยนเป็นประโยคปฏิเสธ: The car crashed into a tree.", prefix: "The car", suffix: "into a tree.", a: "didn't crash" },
+            { q: "เติมคำกริยาให้อยู่ในรูปอดีต (V.2): A boy ________ (fall) off his bike.", prefix: "A boy", suffix: "off his bike.", a: "fell" }
+        ];
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        let currentExP1, currentExP2;
+
+        function initExercise() {
+            currentExP1 = shuffle([...exPart1]);
+            currentExP2 = shuffle([...exPart2]);
+            const cont = document.getElementById('ex-container');
+            let html = `<div class="mb-6"><h3 class="font-bold text-blue-700 mb-2">ตอนที่ 1: เลือกคำตอบที่ถูกต้อง</h3><div class="space-y-4">`;
+            
+            currentExP1.forEach((item, index) => {
+                let optsHtml = shuffle([...item.opts]).map(opt => `
+                    <label class="inline-flex items-center mr-4">
+                        <input type="radio" name="exp1_${index}" value="${opt}" class="text-blue-600">
+                        <span class="ml-2">${opt}</span>
+                    </label>
+                `).join('');
+                html += `<div class="bg-gray-50 p-3 rounded border"><p class="font-medium mb-2">${index+1}. ${item.q}</p>${optsHtml}</div>`;
+            });
+            
+            html += `</div></div><div><h3 class="font-bold text-blue-700 mb-2">ตอนที่ 2: เติมคำในช่องว่างให้ถูกต้อง</h3><div class="space-y-4">`;
+            currentExP2.forEach((item, index) => {
+                html += `<div class="bg-gray-50 p-3 rounded border">
+                    <p class="font-medium mb-2">${index+1}. ${item.q}</p>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        ${item.prefix ? `<span>${item.prefix}</span>` : ''}
+                        <input type="text" id="exp2_${index}" class="border rounded px-2 py-1 focus:outline-none focus:border-blue-500 w-32">
+                        ${item.suffix ? `<span>${item.suffix}</span>` : ''}
+                    </div>
+                </div>`;
+            });
+            html += `</div></div>`;
+            cont.innerHTML = html;
+            document.getElementById('ex-result').classList.add('hidden');
+        }
+
+        function submitExercise() {
+            const name = document.getElementById('ex-name').value.trim();
+            if (!name) {
+                customAlert('กรุณากรอก ชื่อ-นามสกุล ก่อนส่งคำตอบครับ');
+                return;
+            }
+            
+            let score = 0;
+            let total = currentExP1.length + currentExP2.length;
+            let detailsHtml = "";
+
+            // Check Part 1
+            currentExP1.forEach((item, index) => {
+                const checked = document.querySelector(`input[name="exp1_${index}"]:checked`);
+                const ans = checked ? checked.value : "-";
+                if (ans === item.a) {
+                    score++;
+                    detailsHtml += `<div class="text-green-600">✅ ข้อ ${index+1} (ตอน 1): ตอบ "${ans}" ถูกต้อง</div>`;
+                } else {
+                    detailsHtml += `<div class="text-red-500">❌ ข้อ ${index+1} (ตอน 1): คุณตอบ "${ans}" (ยังไม่ถูกต้อง)</div>`;
+                }
+            });
+
+            // Check Part 2
+            currentExP2.forEach((item, index) => {
+                const ans = document.getElementById(`exp2_${index}`).value.trim().toLowerCase();
+                if (ans === item.a.toLowerCase()) {
+                    score++;
+                    detailsHtml += `<div class="text-green-600">✅ ข้อ ${index+1} (ตอน 2): ตอบ "${ans}" ถูกต้อง</div>`;
+                } else {
+                    detailsHtml += `<div class="text-red-500">❌ ข้อ ${index+1} (ตอน 2): คุณตอบ "${ans}" (ยังไม่ถูกต้อง)</div>`;
+                }
+            });
+
+            document.getElementById('ex-res-name').innerText = `ผู้ทำแบบฝึกหัด: ${name}`;
+            document.getElementById('ex-res-score').innerText = `${score} / ${total} คะแนน`;
+            document.getElementById('ex-res-details').innerHTML = detailsHtml;
+            document.getElementById('ex-result').classList.remove('hidden');
+            document.getElementById('ex-result').scrollIntoView({ behavior: 'smooth' });
+        }
+
+
+        // ==========================================
+        // POST-TEST LOGIC
+        // ==========================================
+        const testBank = [
+            { q: "Last week, I _____ an accident on my way to school.", opts: ["see", "saw", "seeing", "seen"], a: "saw" },
+            { q: "_____ the police come to the scene?", opts: ["Did", "Do", "Does", "Are"], a: "Did" },
+            { q: "She _____ call the ambulance because someone else already did.", opts: ["isn't", "don't", "didn't", "wasn't"], a: "didn't" },
+            { q: "The old man _____ on the wet floor and _____ his arm.", opts: ["fall / brake", "fell / broke", "falls / breaks", "fell / break"], a: "fell / broke" },
+            { q: "Which sentence is CORRECT?", opts: [
+                "I didn't saw the fire.", 
+                "He called 1669 yesterday.", 
+                "Did she crashed her car?", 
+                "They happen to see it."
+            ], a: "He called 1669 yesterday." }
+        ];
+
+        let currentTestState = { qList: [], qIndex: 0, score: 0, name: "" };
+
+        function startTest() {
+            const name = document.getElementById('test-name').value.trim();
+            if (!name) {
+                customAlert('กรุณากรอก ชื่อ-นามสกุล ก่อนเริ่มทดสอบครับ');
+                return;
+            }
+            
+            currentTestState.name = name;
+            currentTestState.score = 0;
+            currentTestState.qIndex = 0;
+            // Shuffle questions
+            currentTestState.qList = shuffle([...testBank]).slice(0, 5);
+            
+            document.getElementById('test-intro').classList.add('hidden');
+            document.getElementById('test-result').classList.add('hidden');
+            document.getElementById('test-active').classList.remove('hidden');
+            
+            renderTestQuestion();
+        }
+
+        function renderTestQuestion() {
+            const index = currentTestState.qIndex;
+            const qData = currentTestState.qList[index];
+            
+            document.getElementById('test-progress-text').innerText = `ข้อ ${index + 1} / 5`;
+            document.getElementById('test-progress-bar').style.width = `${((index + 1) / 5) * 100}%`;
+            
+            const shuffledOpts = shuffle([...qData.opts]);
+            let html = `<h3 class="text-lg font-bold mb-4">${index + 1}. ${qData.q}</h3><div class="space-y-2">`;
+            
+            shuffledOpts.forEach(opt => {
+                html += `
+                <label class="block w-full border border-gray-300 rounded p-3 cursor-pointer hover:bg-blue-50 transition">
+                    <input type="radio" name="test_opt" value="${opt}" class="mr-2" onchange="document.getElementById('btn-test-next').disabled = false;">
+                    ${opt}
+                </label>`;
+            });
+            html += `</div>`;
+            
+            document.getElementById('question-container').innerHTML = html;
+            document.getElementById('btn-test-next').disabled = true;
+            
+            if (index === 4) {
+                document.getElementById('btn-test-next').innerText = "ส่งแบบทดสอบ (Submit)";
+            } else {
+                document.getElementById('btn-test-next').innerText = "ข้อต่อไป (Next)";
+            }
+        }
+
+        function nextQuestion() {
+            const selected = document.querySelector('input[name="test_opt"]:checked');
+            if(selected && selected.value === currentTestState.qList[currentTestState.qIndex].a) {
+                currentTestState.score++;
+            }
+            
+            currentTestState.qIndex++;
+            if (currentTestState.qIndex < 5) {
+                renderTestQuestion();
+            } else {
+                showTestResult();
+            }
+        }
+
+        function showTestResult() {
+            document.getElementById('test-active').classList.add('hidden');
+            document.getElementById('test-result').classList.remove('hidden');
+            
+            document.getElementById('test-res-name').innerText = `ผู้สอบ: ${currentTestState.name}`;
+            document.getElementById('test-res-score').innerText = currentTestState.score;
+        }
+
+    </script>
+</body>
+</html>
